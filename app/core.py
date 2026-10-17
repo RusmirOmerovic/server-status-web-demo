@@ -47,15 +47,43 @@ def add_server(
     return True       
 
 # update servers in server store
-def update_servers(server_name: str, status: str, ip: str | None = None, os: str | None = None, role: str | None = None) -> ServerDict:
-    if server_name in server_store:
-        server_store[server_name]["status"] = status
+def update_server(
+        server_name: str,
+        ip: str | None = None, 
+        os: str | None = None, 
+        role: str | None = None
+) -> bool:
+    if server_name not in server_store:
+        return False  # Server does not exist
+
+    if ip is not None:
         server_store[server_name]["ip"] = ip
+    if os is not None:
         server_store[server_name]["os"] = os
+    if role is not None:
         server_store[server_name]["role"] = role
+
+    return True
+
+# Server status update function
+def toggle_status(server_name: str) -> bool:
+    if server_name not in server_store:
+        return False  # Server does not exist
+
+    current_status = server_store[server_name]["status"]
+
+    if current_status == "offline":
+        server_store[server_name]["status"] = "online"
     else:
-        raise ValueError(f"Server '{server_name}' not found in the store.")
+        server_store[server_name]["status"] = "offline"
 
-    return server_store
+    return True
 
-    
+
+# Delete server function
+def remove_server(server_name: str) -> bool:
+    if server_name not in server_store:
+        return False
+
+    del server_store[server_name]
+    return True
